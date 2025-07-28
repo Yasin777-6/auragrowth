@@ -91,10 +91,38 @@ def generate_ai_quests(profile_id):
             quest_type='daily'
         ).delete()
         
-        # Generate new AI-powered quests
+        # Generate new goal-based AI-powered quests
         new_quests = generate_daily_quests(profile, count=5)
         
-        return f"Generated {len(new_quests)} AI quests for {profile.name}"
+        # If user has a goal, also create a habit suggestion
+        if profile.goal:
+            from .models import Habit
+            # Generate a habit based on their goal
+            goal_lower = profile.goal.lower()
+            if any(word in goal_lower for word in ['fit', 'exercise', 'workout', 'health']):
+                habit_name = "Daily Exercise"
+                habit_description = "Build consistency toward your fitness goal"
+            elif any(word in goal_lower for word in ['learn', 'study', 'read', 'skill']):
+                habit_name = "Daily Learning"
+                habit_description = "Dedicate time each day to learning and skill development"
+            elif any(word in goal_lower for word in ['social', 'network', 'people']):
+                habit_name = "Social Connection"
+                habit_description = "Connect with people daily to build relationships"
+            else:
+                habit_name = "Goal Progress"
+                habit_description = f"Take daily action toward: {profile.goal}"
+            
+            # Create habit if it doesn't exist
+            if not Habit.objects.filter(profile=profile, name__icontains=habit_name[:10]).exists():
+                Habit.objects.create(
+                    profile=profile,
+                    name=habit_name,
+                    description=habit_description,
+                    frequency='daily',
+                    ai_suggested=True
+                )
+        
+        return f"Generated {len(new_quests)} goal-based AI quests for {profile.name}"
         
     except Profile.DoesNotExist:
         return f"Profile {profile_id} not found"

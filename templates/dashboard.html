@@ -14,6 +14,41 @@
         </p>
     </div>
 
+    <!-- Goal Progress Section -->
+    {% if profile.goal %}
+    <div class="max-w-4xl mx-auto mb-8">
+        <div class="cyber-panel p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-title text-cyan-400">🎯 Your Mission</h2>
+                <span class="text-sm text-gray-400">{{ profile.goal_progress }}% Complete</span>
+            </div>
+            
+            <p class="text-gray-300 mb-4">{{ profile.goal }}</p>
+            
+            <div class="w-full bg-gray-700 rounded-full h-3 mb-2">
+                <div class="bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500 ease-out" 
+                     style="width: {{ profile.goal_progress }}%"></div>
+            </div>
+            
+            <div class="flex justify-between text-xs text-gray-400">
+                <span>Started</span>
+                {% if profile.goal_progress >= 100 %}
+                    <span class="text-green-400 font-semibold">🎉 ACHIEVED!</span>
+                {% elif profile.goal_progress >= 75 %}
+                    <span class="text-yellow-400 font-semibold">Almost There!</span>
+                {% elif profile.goal_progress >= 50 %}
+                    <span class="text-blue-400 font-semibold">Halfway Point!</span>
+                {% elif profile.goal_progress >= 25 %}
+                    <span class="text-cyan-400 font-semibold">Making Progress!</span>
+                {% else %}
+                    <span>Keep Going!</span>
+                {% endif %}
+                <span>Goal Achieved</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Main Dashboard Grid -->
     <div class="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6">
         

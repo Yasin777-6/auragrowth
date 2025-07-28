@@ -14,7 +14,7 @@ import random
 from django.conf import settings
 
 from .models import Profile, Quest, Habit, LogEntry, AIResponse, StatusEffect
-from .utils import generate_ai_response, parse_ai_action, generate_daily_quests, clean_ai_response
+from .utils import generate_ai_response, parse_ai_action, generate_daily_quests, clean_ai_response, get_enhanced_personality_prompt
 
 
 def welcome(request):
@@ -82,6 +82,7 @@ def register(request):
                     charisma=default_stats['charisma'],
                     endurance=default_stats['endurance'],
                     luck=default_stats['luck'],
+                    goal=goal,  # Save the user's goal
                 )
                 
                 # Create simple welcome message
@@ -210,8 +211,12 @@ def stats(request):
 
 @login_required
 def chat(request):
-    """AI chat interface"""
+    """AI chat interface with persistent history"""
     profile = get_object_or_404(Profile, user=request.user)
+    
+    # Get recent chat history (last 20 messages)
+    chat_history = AIResponse.objects.filter(profile=profile).order_by('-timestamp')[:20]
+    chat_history = list(reversed(chat_history))  # Reverse to show oldest first
     
     if request.method == 'POST':
         user_message = request.POST.get('message', '').strip()
@@ -219,49 +224,88 @@ def chat(request):
             return JsonResponse({'error': 'Empty message'}, status=400)
         
         try:
-            # Don't save user message - ephemeral chat
+            # Save user message to history
+            AIResponse.objects.create(
+                profile=profile,
+                role='user',
+                content=user_message
+            )
             
-            # Generate AI response with action parsing
+            # Build context with recent history for better AI responses
+            recent_messages = AIResponse.objects.filter(profile=profile).order_by('-timestamp')[:6]
+            context_messages = []
+            for msg in reversed(recent_messages):
+                context_messages.append(f"{msg.role}: {msg.content}")
+            
+            # Enhanced AI prompt with goal awareness and personality
+            personality_prompt = get_enhanced_personality_prompt(profile.ai_personality)
+            goal_context = f"User's main goal: {profile.goal}" if profile.goal else "User hasn't set a specific goal yet."
+            
             ai_prompt = f"""
-            You are an RPG mentor for {profile.name}, a Level {profile.level} {profile.character_class}.
+            {personality_prompt}
+            
+            You are mentoring {profile.name}, a Level {profile.level} {profile.character_class}.
             Current stats: STR:{profile.strength} INT:{profile.intelligence} CHR:{profile.charisma} END:{profile.endurance} LCK:{profile.luck}
+            {goal_context}
+            Goal progress: {profile.goal_progress}%
             
-            User said: "{user_message}"
+            Recent conversation:
+            {chr(10).join(context_messages[-4:]) if context_messages else "This is the start of our conversation."}
             
-            Parse for actions like:
-            - Quest completion ("I finished my workout", "completed reading")
-            - New habit requests ("I want to start meditating daily")
-            - Progress updates ("I'm feeling motivated", "struggled today")
+            Latest message: "{user_message}"
             
-            Respond in character as a {profile.ai_personality} mentor.
-            Keep your response conversational and engaging, without JSON code blocks.
+            Guidelines:
+            - Stay in character with lots of personality and charisma
+            - Reference their goal and suggest actions that help achieve it
+            - Parse for quest completions, habit requests, or progress updates
+            - If they mention progress toward their goal, suggest updating the progress bar
+            - Be encouraging but realistic, with anime/RPG flair
+            - Keep responses conversational and engaging
+            
+            Respond naturally without JSON code blocks.
             """
             
-            raw_ai_response = generate_ai_response(ai_prompt)
+            raw_ai_response = generate_ai_response(ai_prompt, max_tokens=600)
             
             # Parse actions BEFORE cleaning the response
             action_data = parse_ai_action(raw_ai_response, profile)
             
-            # Clean the response for display
+            # Check for goal progress updates
+            if profile.goal and any(word in user_message.lower() for word in ['progress', 'closer', 'achieved', 'completed', 'finished']):
+                # Simple progress calculation - could be enhanced with AI
+                progress_keywords = ['made progress', 'getting closer', 'almost there', 'halfway', 'completed']
+                for i, keyword in enumerate(progress_keywords):
+                    if keyword in user_message.lower():
+                        new_progress = min(profile.goal_progress + (i + 1) * 10, 100)
+                        if new_progress > profile.goal_progress:
+                            profile.goal_progress = new_progress
+                            profile.save()
+                            action_data['goal_progress'] = new_progress
+                        break
+            
+            # Clean the AI response
             clean_response = clean_ai_response(raw_ai_response)
             
-            # Don't save AI response - ephemeral chat
+            # Save AI response to history
+            AIResponse.objects.create(
+                profile=profile,
+                role='assistant',
+                content=clean_response
+            )
             
             return JsonResponse({
                 'response': clean_response,
-                'action_data': action_data,
-                'timestamp': timezone.now().isoformat()
+                'action_data': action_data
             })
             
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            print(f"Chat error: {e}")
+            return JsonResponse({'error': 'Failed to generate response'}, status=500)
     
-    # No chat history - ephemeral chat
-    context = {
+    return render(request, 'chat.html', {
         'profile': profile,
-    }
-    
-    return render(request, 'chat.html', context)
+        'chat_history': chat_history
+    })
 
 
 @login_required

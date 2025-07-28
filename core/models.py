@@ -44,6 +44,10 @@ class Profile(models.Model):
     ai_personality = models.CharField(max_length=20, choices=PERSONALITY_CHOICES, default='mentor')
     timezone = models.CharField(max_length=50, default='UTC')
     
+    # Goal System
+    goal = models.TextField(blank=True, help_text="User's main life goal")
+    goal_progress = models.IntegerField(default=0, help_text="Goal progress percentage (0-100)")
+    
     # Metadata
     created_at = models.DateTimeField(auto_now_add=True)
     last_active = models.DateTimeField(auto_now=True)
