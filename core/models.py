@@ -38,7 +38,7 @@ class Profile(models.Model):
     
     # Experience and Progress
     total_xp = models.IntegerField(default=0)
-    xp_to_next_level = models.IntegerField(default=10000)
+    xp_to_next_level = models.IntegerField(default=100)
     
     # User preferences
     ai_personality = models.CharField(max_length=20, choices=PERSONALITY_CHOICES, default='mentor')
