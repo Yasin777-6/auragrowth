@@ -82,7 +82,7 @@ import dj_database_url
 
 DATABASES = {
     'default': dj_database_url.parse(
-        os.getenv('DATABASE_URL', 'postgresql://postgres:RsMpihpULCZUxLAcFBOVvtRoaeuLrZyp@gondola.proxy.rlwy.net:18134/railway')
+        os.getenv('DATABASE_URL')
     )
 }
 
