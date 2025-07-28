@@ -78,15 +78,12 @@ WSGI_APPLICATION = 'rpgAi.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-    }
+    'default': dj_database_url.parse(
+        os.getenv('DATABASE_URL', 'postgresql://postgres:RsMpihpULCZUxLAcFBOVvtRoaeuLrZyp@gondola.proxy.rlwy.net:18134/railway')
+    )
 }
 
 # Redis Configuration (for Celery)
