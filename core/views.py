@@ -10,6 +10,8 @@ from django.utils import timezone
 from django.db import transaction
 import json
 import requests
+import random
+from django.conf import settings
 
 from .models import Profile, Quest, Habit, LogEntry, AIResponse, StatusEffect
 from .utils import generate_ai_response, parse_ai_action, generate_daily_quests, clean_ai_response
@@ -55,58 +57,67 @@ def register(request):
                     first_name=name
                 )
                 
-                # Generate character class and starting stats with AI
-                ai_prompt = f"""
-                Analyze this new RPG player:
-                Name: {name}
-                Role: {role}
-                Interests: {', '.join(interests)}
-                Goal: {goal}
+                # Use instant fallback character data for fast registration
+                # AI will enhance this in the background
+                character_classes = [
+                    "Novice Scholar", "Aspiring Warrior", "Rising Explorer",
+                    "Eager Student", "Determined Seeker", "Brave Adventurer"
+                ]
                 
-                Create a character profile with:
-                1. A cool RPG class name (like "Scholar of Focus", "Warrior of Discipline")
-                2. Starting stat bonuses (distribute 10 extra points among STR, INT, CHR, END, LCK)
-                3. Brief welcome message in character
+                default_stats = {
+                    "strength": 12,
+                    "intelligence": 13, 
+                    "charisma": 11,
+                    "endurance": 12,
+                    "luck": 12
+                }
                 
-                Return JSON: {{"class": "class_name", "stats": {{"strength": 12, "intelligence": 15, ...}}, "message": "welcome_text"}}
-                """
-                
-                ai_result = generate_ai_response(ai_prompt)
-                try:
-                    character_data = json.loads(ai_result)
-                except:
-                    # Fallback if AI fails
-                    character_data = {
-                        "class": "Novice Adventurer",
-                        "stats": {"strength": 12, "intelligence": 12, "charisma": 11, "endurance": 11, "luck": 14},
-                        "message": f"Welcome, {name}! Your journey begins now."
-                    }
-                
-                # Create profile
+                # Create profile with instant defaults
                 profile = Profile.objects.create(
                     user=user,
                     name=name,
-                    character_class=character_data.get('class', 'Novice Adventurer'),
-                    strength=character_data['stats'].get('strength', 10),
-                    intelligence=character_data['stats'].get('intelligence', 10),
-                    charisma=character_data['stats'].get('charisma', 10),
-                    endurance=character_data['stats'].get('endurance', 10),
-                    luck=character_data['stats'].get('luck', 10),
+                    character_class=random.choice(character_classes),
+                    strength=default_stats['strength'],
+                    intelligence=default_stats['intelligence'],
+                    charisma=default_stats['charisma'],
+                    endurance=default_stats['endurance'],
+                    luck=default_stats['luck'],
                 )
                 
-                # Create welcome AI message
+                # Create simple welcome message
                 AIResponse.objects.create(
                     profile=profile,
                     role='assistant',
-                    content=character_data.get('message', f'Welcome to Aura Growth, {name}!')
+                    content=f'Welcome to Aura Growth, {name}! Your character is being customized by our AI - check back in a moment for your personalized profile and quests!'
                 )
                 
-                # Generate first daily quests
-                generate_daily_quests(profile)
+                # Generate basic starter quests instantly using fallbacks
+                from .utils import generate_fallback_quests
+                generate_fallback_quests(profile, create_objects=True)
                 
-                # Log in the user
+                # Log in the user immediately
                 login(request, user)
                 messages.success(request, f'Character created! Welcome, {profile.character_class}!')
+                
+                # Schedule AI enhancement in background (after response is sent)
+                try:
+                    from .tasks import enhance_character_with_ai, generate_ai_quests
+                    # Schedule AI enhancement for 5 seconds later (after user sees dashboard)
+                    enhance_character_with_ai.apply_async(
+                        args=[profile.id, name, role, interests, goal],
+                        countdown=5
+                    )
+                    # Schedule quest generation for 10 seconds later  
+                    generate_ai_quests.apply_async(
+                        args=[profile.id],
+                        countdown=10
+                    )
+                except Exception as e:
+                    # If Celery isn't available, log but don't fail registration
+                    print(f"Background task scheduling failed: {e}")
+                    # Could add these tasks to a queue or run synchronously as fallback
+                    pass
+                
                 return redirect('dashboard')
                 
         except Exception as e:

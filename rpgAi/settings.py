@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',  # Our main Aura Growth app
+    'celery',  # Background task processing
 ]
 
 MIDDLEWARE = [
