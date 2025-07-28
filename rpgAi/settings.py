@@ -32,6 +32,15 @@ DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
+# CSRF Trusted Origins - for production deployment
+CSRF_TRUSTED_ORIGINS = [
+    'https://auragrowth-production.up.railway.app',
+]
+
+# Add environment variable support for additional trusted origins if needed
+if os.getenv('CSRF_TRUSTED_ORIGINS'):
+    CSRF_TRUSTED_ORIGINS.extend(os.getenv('CSRF_TRUSTED_ORIGINS').split(','))
+
 
 # Application definition
 
