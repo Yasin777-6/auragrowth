@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Continue Your Adventure - Aura Growth{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center py-12 px-4">
+    <div class="max-w-md w-full">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="font-title text-5xl text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text mb-4">
+                Welcome Back
+            </h1>
+            <p class="text-xl text-gray-400">
+                Continue your journey to greatness
+            </p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="cyber-panel p-8">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-300 mb-2">
+                        Username
+                    </label>
+                    <input type="text" 
+                           id="username" 
+                           name="username" 
+                           required
+                           class="w-full px-4 py-3 bg-gray-800 border border-cyan-400 rounded-lg text-gray-100 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all"
+                           placeholder="Enter your username">
+                </div>
+                
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
+                        Password
+                    </label>
+                    <input type="password" 
+                           id="password" 
+                           name="password" 
+                           required
+                           class="w-full px-4 py-3 bg-gray-800 border border-cyan-400 rounded-lg text-gray-100 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all"
+                           placeholder="Enter your password">
+                </div>
+
+                <!-- Error Messages -->
+                {% if form.errors %}
+                <div class="cyber-panel p-4 border-red-400 text-red-400">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <p class="text-sm">{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Submit Button -->
+                <button type="submit" 
+                        class="w-full btn-primary py-4 text-lg font-semibold inline-flex items-center justify-center space-x-3 hover:scale-105 transition-all duration-300">
+                    <span>Enter the World</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                    </svg>
+                </button>
+                
+                <div class="text-center">
+                    <p class="text-gray-400 text-sm">
+                        New to Aura Growth? 
+                        <a href="{% url 'register' %}" class="text-cyan-400 hover:text-cyan-300 underline">
+                            Create your character
+                        </a>
+                    </p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Decorative Elements -->
+        <div class="mt-8 text-center">
+            <div class="cyber-panel p-4 inline-block opacity-75">
+                <div class="flex items-center space-x-2">
+                    <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span class="text-sm font-mono text-gray-400">LOGIN SYSTEM ACTIVE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Form submission enhancement
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const button = e.target.querySelector('button[type="submit"]');
+        button.innerHTML = `
+            <div class="loading-spinner"></div>
+            <span>Authenticating...</span>
+        `;
+        button.disabled = true;
+    });
+    
+    // Add enter key support
+    document.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && e.target.type !== 'submit') {
+            document.querySelector('button[type="submit"]').click();
+        }
+    });
+</script>
+{% endblock %} 

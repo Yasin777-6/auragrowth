@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+
+{% block title %}Progress Stats - Aura Growth{% endblock %}
+
+{% block content %}
+<div class="min-h-screen p-6">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="font-title text-4xl text-transparent bg-gradient-to-r from-holographic to-cyan-bright bg-clip-text mb-2">
+                Progress & Stats
+            </h1>
+            <p class="text-xl text-gray-400">
+                Track your growth and celebrate your achievements
+            </p>
+        </div>
+
+        <!-- Character Overview -->
+        <div class="cyber-panel p-8 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Character Info -->
+                <div class="text-center">
+                    <div class="w-32 h-32 mx-auto mb-4 bg-gradient-to-br from-cyan-400 to-purple-400 rounded-full flex items-center justify-center">
+                        <span class="text-4xl font-title text-white">{{ profile.name|first }}</span>
+                    </div>
+                    <h2 class="text-2xl font-title text-holographic mb-1">{{ profile.name }}</h2>
+                    <p class="text-gray-400 mb-2">{{ profile.character_class }}</p>
+                    <div class="flex items-center justify-center space-x-2">
+                        <span class="text-3xl font-mono text-holographic">{{ profile.level }}</span>
+                        <span class="text-gray-400">Level</span>
+                    </div>
+                </div>
+
+                <!-- XP Progress -->
+                <div class="flex flex-col justify-center">
+                    <h3 class="text-xl font-title text-holographic mb-4 text-center">Experience Progress</h3>
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm text-gray-400 mb-2">
+                            <span>Current XP: {{ profile.total_xp }}</span>
+                            <span>Next Level: {{ profile.xp_to_next_level }}</span>
+                        </div>
+                        <div class="stat-bar h-6">
+                            <div class="stat-bar-fill" style="width: {{ profile.total_xp|floatformat:0 }}%"></div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-sm text-gray-400">
+                            {{ profile.xp_to_next_level }} XP to next level
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="flex flex-col justify-center">
+                    <h3 class="text-xl font-title text-holographic mb-4 text-center">Overview</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Total Quests:</span>
+                            <span class="text-holographic font-mono">{{ total_quests }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Completed:</span>
+                            <span class="text-green-400 font-mono">{{ completed_quests }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Success Rate:</span>
+                            <span class="text-holographic font-mono">{{ completion_rate|floatformat:1 }}%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Total Stats:</span>
+                            <span class="text-purple-400 font-mono">{{ profile.get_total_stats }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Stats -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            
+            <!-- Stat Breakdown -->
+            <div class="cyber-panel p-6">
+                <h3 class="text-2xl font-title text-holographic mb-6">Character Attributes</h3>
+                <div class="space-y-6">
+                    
+                    <!-- Strength -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-red-500/20 border border-red-400 rounded flex items-center justify-center">
+                                    <span class="text-sm font-mono font-bold text-red-400">STR</span>
+                                </div>
+                                <div>
+                                    <div class="text-gray-300 font-semibold">Strength</div>
+                                    <div class="text-xs text-gray-400">Physical power & endurance</div>
+                                </div>
+                            </div>
+                            <span class="text-2xl font-mono text-red-400">{{ profile.strength }}</span>
+                        </div>
+                        <div class="stat-bar h-3">
+                            <div class="stat-bar-fill bg-red-400" style="width: {{ profile.strength }}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Intelligence -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-500/20 border border-blue-400 rounded flex items-center justify-center">
+                                    <span class="text-sm font-mono font-bold text-blue-400">INT</span>
+                                </div>
+                                <div>
+                                    <div class="text-gray-300 font-semibold">Intelligence</div>
+                                    <div class="text-xs text-gray-400">Learning & problem-solving</div>
+                                </div>
+                            </div>
+                            <span class="text-2xl font-mono text-blue-400">{{ profile.intelligence }}</span>
+                        </div>
+                        <div class="stat-bar h-3">
+                            <div class="stat-bar-fill bg-blue-400" style="width: {{ profile.intelligence }}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Charisma -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-purple-500/20 border border-purple-400 rounded flex items-center justify-center">
+                                    <span class="text-sm font-mono font-bold text-purple-400">CHR</span>
+                                </div>
+                                <div>
+                                    <div class="text-gray-300 font-semibold">Charisma</div>
+                                    <div class="text-xs text-gray-400">Social skills & influence</div>
+                                </div>
+                            </div>
+                            <span class="text-2xl font-mono text-purple-400">{{ profile.charisma }}</span>
+                        </div>
+                        <div class="stat-bar h-3">
+                            <div class="stat-bar-fill bg-purple-400" style="width: {{ profile.charisma }}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Endurance -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-green-500/20 border border-green-400 rounded flex items-center justify-center">
+                                    <span class="text-sm font-mono font-bold text-green-400">END</span>
+                                </div>
+                                <div>
+                                    <div class="text-gray-300 font-semibold">Endurance</div>
+                                    <div class="text-xs text-gray-400">Persistence & willpower</div>
+                                </div>
+                            </div>
+                            <span class="text-2xl font-mono text-green-400">{{ profile.endurance }}</span>
+                        </div>
+                        <div class="stat-bar h-3">
+                            <div class="stat-bar-fill bg-green-400" style="width: {{ profile.endurance }}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Luck -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-yellow-500/20 border border-yellow-400 rounded flex items-center justify-center">
+                                    <span class="text-sm font-mono font-bold text-yellow-400">LCK</span>
+                                </div>
+                                <div>
+                                    <div class="text-gray-300 font-semibold">Luck</div>
+                                    <div class="text-xs text-gray-400">Fortune & opportunity</div>
+                                </div>
+                            </div>
+                            <span class="text-2xl font-mono text-yellow-400">{{ profile.luck }}</span>
+                        </div>
+                        <div class="stat-bar h-3">
+                            <div class="stat-bar-fill bg-yellow-400" style="width: {{ profile.luck }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="cyber-panel p-6">
+                <h3 class="text-2xl font-title text-holographic mb-6">Recent Activity</h3>
+                <div class="space-y-4 max-h-96 overflow-y-auto">
+                    {% for log in recent_logs %}
+                    <div class="flex items-start space-x-4 p-4 bg-gray-900/50 rounded border border-gray-700">
+                        <div class="flex-shrink-0">
+                            {% if log.action_type == 'quest_completed' %}
+                            <div class="w-8 h-8 bg-green-500/20 border border-green-400 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            {% elif log.action_type == 'level_up' %}
+                            <div class="w-8 h-8 bg-holographic/20 border border-holographic rounded-full flex items-center justify-center">
+                                <span class="text-xs font-bold text-holographic">↑</span>
+                            </div>
+                            {% elif log.action_type == 'habit_completed' %}
+                            <div class="w-8 h-8 bg-purple-500/20 border border-purple-400 rounded-full flex items-center justify-center">
+                                <span class="text-xs font-bold text-purple-400">♦</span>
+                            </div>
+                            {% else %}
+                            <div class="w-8 h-8 bg-gray-500/20 border border-gray-400 rounded-full flex items-center justify-center">
+                                <span class="text-xs font-bold text-gray-400">•</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-300 text-sm">{{ log.action_description }}</p>
+                            <div class="flex items-center space-x-4 mt-1">
+                                <span class="text-xs text-gray-400">{{ log.timestamp|timesince }} ago</span>
+                                {% if log.xp_gained %}
+                                <span class="text-xs text-holographic">+{{ log.xp_gained }} XP</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-8">
+                        <p class="text-gray-400">No recent activity</p>
+                        <p class="text-sm text-gray-500 mt-2">Complete some quests to see your progress here!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievement Section (placeholder) -->
+        <div class="cyber-panel p-6">
+            <h3 class="text-2xl font-title text-holographic mb-6">Achievements</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                
+                <!-- First Quest Achievement -->
+                <div class="achievement-card cyber-panel p-4 bg-gray-900/50 {% if completed_quests > 0 %}border-green-400{% else %}border-gray-600 opacity-50{% endif %}">
+                    <div class="text-center">
+                        <div class="w-12 h-12 mx-auto mb-2 {% if completed_quests > 0 %}bg-green-500/20 border-green-400{% else %}bg-gray-500/20 border-gray-600{% endif %} rounded-full flex items-center justify-center">
+                            <span class="text-lg">🎯</span>
+                        </div>
+                        <h4 class="text-sm font-semibold {% if completed_quests > 0 %}text-green-400{% else %}text-gray-400{% endif %}">First Steps</h4>
+                        <p class="text-xs text-gray-400">Complete your first quest</p>
+                    </div>
+                </div>
+
+                <!-- Level 5 Achievement -->
+                <div class="achievement-card cyber-panel p-4 bg-gray-900/50 {% if profile.level >= 5 %}border-blue-400{% else %}border-gray-600 opacity-50{% endif %}">
+                    <div class="text-center">
+                        <div class="w-12 h-12 mx-auto mb-2 {% if profile.level >= 5 %}bg-blue-500/20 border-blue-400{% else %}bg-gray-500/20 border-gray-600{% endif %} rounded-full flex items-center justify-center">
+                            <span class="text-lg">⭐</span>
+                        </div>
+                        <h4 class="text-sm font-semibold {% if profile.level >= 5 %}text-blue-400{% else %}text-gray-400{% endif %}">Rising Star</h4>
+                        <p class="text-xs text-gray-400">Reach level 5</p>
+                    </div>
+                </div>
+
+                <!-- Completion Rate Achievement -->
+                <div class="achievement-card cyber-panel p-4 bg-gray-900/50 {% if completion_rate >= 80 %}border-purple-400{% else %}border-gray-600 opacity-50{% endif %}">
+                    <div class="text-center">
+                        <div class="w-12 h-12 mx-auto mb-2 {% if completion_rate >= 80 %}bg-purple-500/20 border-purple-400{% else %}bg-gray-500/20 border-gray-600{% endif %} rounded-full flex items-center justify-center">
+                            <span class="text-lg">🏆</span>
+                        </div>
+                        <h4 class="text-sm font-semibold {% if completion_rate >= 80 %}text-purple-400{% else %}text-gray-400{% endif %}">Achiever</h4>
+                        <p class="text-xs text-gray-400">80% completion rate</p>
+                    </div>
+                </div>
+
+                <!-- Total Stats Achievement -->
+                <div class="achievement-card cyber-panel p-4 bg-gray-900/50 {% if profile.get_total_stats >= 75 %}border-yellow-400{% else %}border-gray-600 opacity-50{% endif %}">
+                    <div class="text-center">
+                        <div class="w-12 h-12 mx-auto mb-2 {% if profile.get_total_stats >= 75 %}bg-yellow-500/20 border-yellow-400{% else %}bg-gray-500/20 border-gray-600{% endif %} rounded-full flex items-center justify-center">
+                            <span class="text-lg">💪</span>
+                        </div>
+                        <h4 class="text-sm font-semibold {% if profile.get_total_stats >= 75 %}text-yellow-400{% else %}text-gray-400{% endif %}">Well-Rounded</h4>
+                        <p class="text-xs text-gray-400">75+ total stats</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Add some interactivity to achievement cards
+    document.querySelectorAll('.achievement-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            if (!this.classList.contains('opacity-50')) {
+                this.classList.add('scale-105');
+            }
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.classList.remove('scale-105');
+        });
+    });
+</script>
+{% endblock %} 

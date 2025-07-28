@@ -1,0 +1,207 @@
+{
+    "designSystem": {
+      "name": "Cyber Panel UI",
+      "version": "1.0.0",
+      "description": "Unified design system for futuristic panels and chat interface"
+    },
+    
+    "colorPalette": {
+      "primary": {
+        "cyan": "#00D4FF",
+        "cyanBright": "#40E0FF",
+        "cyanDim": "#0099CC",
+        "teal": "#00B4CC",
+        "tealDark": "#008999"
+      },
+      "backgrounds": {
+        "panelDark": "#0A0F1A",
+        "panelMedium": "#1A2332",
+        "chatDark": "#1E1B3A",
+        "chatMedium": "#2A2554",
+        "overlay": "rgba(0, 212, 255, 0.1)"
+      },
+      "accents": {
+        "glow": "#00D4FF",
+        "highlight": "#40E0FF",
+        "active": "#00B4CC",
+        "inactive": "#4A5568",
+        "text": "#E2E8F0"
+      }
+    },
+  
+    "components": {
+      "futuristicPanels": {
+        "container": {
+          "backgroundColor": "#0A0F1A",
+          "border": "2px solid #00D4FF",
+          "borderRadius": "8px",
+          "boxShadow": "0 0 20px rgba(0, 212, 255, 0.3)",
+          "backdropFilter": "blur(10px)"
+        },
+        "elements": {
+          "lines": {
+            "color": "#00D4FF",
+            "glowColor": "#40E0FF",
+            "width": "2px",
+            "animation": "pulse 2s infinite"
+          },
+          "dots": {
+            "color": "#00D4FF",
+            "size": "6px",
+            "glow": "0 0 10px #00D4FF"
+          },
+          "bars": {
+            "primary": "#00D4FF",
+            "secondary": "#00B4CC",
+            "height": "4px",
+            "spacing": "2px"
+          }
+        }
+      },
+  
+      "chatInterface": {
+        "container": {
+          "backgroundColor": "#1E1B3A",
+          "borderRadius": "12px",
+          "border": "1px solid #00B4CC"
+        },
+        "header": {
+          "backgroundColor": "#2A2554",
+          "color": "#E2E8F0",
+          "borderBottom": "1px solid #00B4CC"
+        },
+        "messages": {
+          "userBubble": {
+            "backgroundColor": "#00B4CC",
+            "color": "#FFFFFF",
+            "borderRadius": "18px 18px 4px 18px",
+            "boxShadow": "0 2px 8px rgba(0, 180, 204, 0.3)"
+          },
+          "aiBubble": {
+            "backgroundColor": "#2A2554",
+            "color": "#E2E8F0",
+            "border": "1px solid #00D4FF",
+            "borderRadius": "18px 18px 18px 4px",
+            "boxShadow": "0 2px 8px rgba(0, 212, 255, 0.2)"
+          },
+          "timestamp": {
+            "color": "#8A8FA8",
+            "fontSize": "12px"
+          }
+        },
+        "input": {
+          "backgroundColor": "#2A2554",
+          "border": "2px solid #00B4CC",
+          "borderRadius": "24px",
+          "color": "#E2E8F0",
+          "placeholder": "#8A8FA8",
+          "focus": {
+            "borderColor": "#00D4FF",
+            "boxShadow": "0 0 0 3px rgba(0, 212, 255, 0.1)"
+          }
+        },
+        "buttons": {
+          "primary": {
+            "backgroundColor": "#00D4FF",
+            "color": "#0A0F1A",
+            "border": "none",
+            "borderRadius": "20px",
+            "boxShadow": "0 4px 12px rgba(0, 212, 255, 0.4)"
+          },
+          "secondary": {
+            "backgroundColor": "transparent",
+            "color": "#00D4FF",
+            "border": "2px solid #00D4FF",
+            "borderRadius": "20px"
+          }
+        }
+      }
+    },
+  
+    "typography": {
+      "fontFamily": {
+        "primary": "'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+        "monospace": "'Fira Code', 'Monaco', 'Consolas', monospace"
+      },
+      "sizes": {
+        "xs": "12px",
+        "sm": "14px",
+        "base": "16px",
+        "lg": "18px",
+        "xl": "20px",
+        "2xl": "24px"
+      },
+      "weights": {
+        "normal": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700
+      }
+    },
+  
+    "spacing": {
+      "xs": "4px",
+      "sm": "8px",
+      "md": "16px",
+      "lg": "24px",
+      "xl": "32px",
+      "2xl": "48px"
+    },
+  
+    "animations": {
+      "glow": {
+        "keyframes": {
+          "0%": { "boxShadow": "0 0 5px currentColor" },
+          "50%": { "boxShadow": "0 0 20px currentColor" },
+          "100%": { "boxShadow": "0 0 5px currentColor" }
+        },
+        "duration": "2s",
+        "iterationCount": "infinite"
+      },
+      "pulse": {
+        "keyframes": {
+          "0%": { "opacity": "1" },
+          "50%": { "opacity": "0.6" },
+          "100%": { "opacity": "1" }
+        },
+        "duration": "2s",
+        "iterationCount": "infinite"
+      },
+      "slideIn": {
+        "keyframes": {
+          "0%": { "transform": "translateY(20px)", "opacity": "0" },
+          "100%": { "transform": "translateY(0)", "opacity": "1" }
+        },
+        "duration": "0.3s",
+        "easing": "ease-out"
+      }
+    },
+  
+    "breakpoints": {
+      "mobile": "480px",
+      "tablet": "768px",
+      "desktop": "1024px",
+      "wide": "1440px"
+    },
+  
+    "usage": {
+      "panels": {
+        "description": "Use for data visualization, status displays, and control interfaces",
+        "mainColor": "#00D4FF",
+        "backgroundGradient": "linear-gradient(135deg, #0A0F1A 0%, #1A2332 100%)"
+      },
+      "chat": {
+        "description": "Use for conversational interfaces and messaging",
+        "mainColor": "#00B4CC",
+        "backgroundGradient": "linear-gradient(135deg, #1E1B3A 0%, #2A2554 100%)"
+      },
+      "consistency": {
+        "sharedElements": [
+          "Both use cyan-teal color family",
+          "Consistent border radius and spacing",
+          "Similar glow and shadow effects",
+          "Compatible typography scales"
+        ]
+      }
+    }
+  }

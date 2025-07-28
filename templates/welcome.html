@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to Aura Growth - Your Journey Begins{% endblock %}
+
+{% block extra_head %}
+<style>
+    .intro-text {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: introFadeIn 1s ease-out forwards;
+    }
+    
+    .intro-text:nth-child(1) { animation-delay: 0.5s; }
+    .intro-text:nth-child(2) { animation-delay: 1.5s; }
+    .intro-text:nth-child(3) { animation-delay: 2.5s; }
+    .intro-text:nth-child(4) { animation-delay: 3.5s; }
+    
+    @keyframes introFadeIn {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .particle {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: var(--cyan);
+        border-radius: 50%;
+        animation: float 4s ease-in-out infinite;
+        opacity: 0.7;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    .logo-glow {
+        text-shadow: 0 0 20px var(--cyan), 0 0 40px var(--cyan), 0 0 60px var(--cyan);
+        animation: logoGlow 3s ease-in-out infinite;
+    }
+    
+    @keyframes logoGlow {
+        0%, 100% { text-shadow: 0 0 20px var(--cyan), 0 0 40px var(--cyan), 0 0 60px var(--cyan); }
+        50% { text-shadow: 0 0 30px var(--cyan-bright), 0 0 60px var(--cyan-bright), 0 0 90px var(--cyan-bright); }
+    }
+    
+    .begin-button {
+        opacity: 0;
+        animation: buttonAppear 1s ease-out 4.5s forwards;
+        transform: scale(0.8);
+    }
+    
+    @keyframes buttonAppear {
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center relative overflow-hidden">
+    <!-- Background particles -->
+    <div class="absolute inset-0 pointer-events-none">
+        {% for i in "12345678910111213141516171819202122232425262728293031323334353637383940" %}
+        <div class="particle" style="
+            left: {{ forloop.counter|add:10 }}%; 
+            top: {{ forloop.counter|add:20 }}%; 
+            animation-delay: {{ forloop.counter|floatformat:1 }}s;
+            animation-duration: {{ forloop.counter|add:3 }}s;
+        "></div>
+        {% endfor %}
+    </div>
+    
+    <!-- Main content -->
+    <div class="text-center z-10 max-w-4xl mx-auto px-6">
+        <!-- Logo -->
+        <div class="mb-16">
+            <h1 class="font-title text-8xl md:text-9xl text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text logo-glow mb-4">
+                AURA GROWTH
+            </h1>
+            <p class="text-xl text-gray-400 font-mono">
+                Live Your Life Like an Anime RPG
+            </p>
+        </div>
+        
+        <!-- Intro text sequence -->
+        <div class="space-y-8 mb-16">
+            <p class="intro-text text-2xl md:text-3xl font-light text-gray-200">
+                You have awakened in a new world...
+            </p>
+            
+            <p class="intro-text text-2xl md:text-3xl font-light text-gray-200">
+                Where every action shapes your destiny.
+            </p>
+            
+            <p class="intro-text text-2xl md:text-3xl font-light text-gray-200">
+                Your journey to become the hero of your own story begins now.
+            </p>
+            
+            <p class="intro-text text-3xl md:text-4xl font-semibold text-cyan-400">
+                Will you grow stronger?
+            </p>
+        </div>
+        
+        <!-- Call to action -->
+        <div class="begin-button">
+            <a href="{% url 'register' %}" 
+               class="btn-primary px-12 py-4 text-xl font-semibold inline-flex items-center space-x-3 hover:scale-105 transition-all duration-300"
+               _="on click add .animate-pulse to me">
+                <span>Begin Your Journey</span>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
+            </a>
+            
+            <div class="mt-8">
+                <p class="text-gray-400 text-sm">
+                    Already have an account? 
+                    <a href="{% url 'login' %}" class="text-cyan-400 hover:text-cyan-300 underline">
+                        Continue your adventure
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Additional decorative elements -->
+    <div class="absolute bottom-10 left-10 cyber-panel p-4 opacity-75">
+        <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+            <span class="text-sm font-mono text-gray-400">SYSTEM STATUS: ONLINE</span>
+        </div>
+    </div>
+    
+    <div class="absolute bottom-10 right-10 cyber-panel p-4 opacity-75">
+        <div class="flex items-center space-x-2">
+            <span class="text-sm font-mono text-gray-400">AWAITING PLAYER INPUT</span>
+            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+        </div>
+    </div>
+    
+    <!-- Floating stats preview -->
+    <div class="absolute top-20 right-20 cyber-panel p-6 opacity-80 hidden lg:block">
+        <h3 class="text-lg font-title text-cyan-400 mb-4">PREVIEW STATS</h3>
+        <div class="space-y-2">
+            <div class="flex justify-between text-sm">
+                <span class="text-gray-400">STR</span>
+                <span class="text-cyan-400 font-mono">10</span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="text-gray-400">INT</span>
+                <span class="text-cyan-400 font-mono">10</span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="text-gray-400">CHR</span>
+                <span class="text-cyan-400 font-mono">10</span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="text-gray-400">END</span>
+                <span class="text-cyan-400 font-mono">10</span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="text-gray-400">LCK</span>
+                <span class="text-cyan-400 font-mono">10</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Add some interactive sound effects (optional)
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add hover sound effects to buttons if audio is available
+        const beginButton = document.querySelector('.begin-button a');
+        
+        beginButton.addEventListener('mouseenter', function() {
+            // Play hover sound if available
+            // This would require audio files in your static directory
+        });
+        
+        // Add click animation
+        beginButton.addEventListener('click', function(e) {
+            const ripple = document.createElement('div');
+            ripple.style.cssText = `
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(0, 212, 255, 0.3);
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                pointer-events: none;
+            `;
+            
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+    
+    // CSS for ripple animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+{% endblock %} 

@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}Create Your Character - Aura Growth{% endblock %}
+
+{% block content %}
+<div class="min-h-screen py-12 px-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="font-title text-6xl text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text mb-4">
+                Character Creation
+            </h1>
+            <p class="text-xl text-gray-400">
+                Design your avatar and begin your journey
+            </p>
+        </div>
+
+        <!-- Character Creation Form -->
+        <div class="cyber-panel p-8 max-w-2xl mx-auto">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Basic Info -->
+                <div class="space-y-4">
+                    <h3 class="text-2xl font-title text-cyan-400 mb-4">Basic Information</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="username" class="block text-sm font-medium text-gray-300 mb-2">
+                                Username
+                            </label>
+                            <input type="text" 
+                                   id="username" 
+                                   name="username" 
+                                   required
+                                   class="w-full px-4 py-3 bg-gray-800 border border-cyan-400 rounded-lg text-gray-100 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all"
+                                   placeholder="Enter your username">
+                        </div>
+                        
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
+                                Email
+                            </label>
+                            <input type="email" 
+                                   id="email" 
+                                   name="email" 
+                                   required
+                                   class="w-full px-4 py-3 bg-gray-800 border border-cyan-400 rounded-lg text-gray-100 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all"
+                                   placeholder="your@email.com">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-300 mb-2">
+                                Character Name
+                            </label>
+                            <input type="text" 
+                                   id="name" 
+                                   name="name" 
+                                   required
+                                   class="w-full px-4 py-3 bg-gray-800 border border-cyan-400 rounded-lg text-gray-100 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all"
+                                   placeholder="What shall we call you?">
+                        </div>
+                        
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
+                                Password
+                            </label>
+                            <input type="password" 
+                                   id="password" 
+                                   name="password" 
+                                   required
+                                   class="w-full px-4 py-3 bg-gray-800 border border-cyan-400 rounded-lg text-gray-100 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all"
+                                   placeholder="Create a strong password">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Character Background -->
+                <div class="space-y-4">
+                    <h3 class="text-2xl font-title text-cyan-400 mb-4">Character Background</h3>
+                    
+                    <div>
+                        <label for="role" class="block text-sm font-medium text-gray-300 mb-2">
+                            Current Role
+                        </label>
+                        <select id="role" 
+                                name="role" 
+                                class="w-full px-4 py-3 bg-gray-800 border border-cyan-400 rounded-lg text-gray-100 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all">
+                            <option value="student">Student</option>
+                            <option value="freelancer">Freelancer</option>
+                            <option value="artist">Artist</option>
+                            <option value="professional">Professional</option>
+                            <option value="entrepreneur">Entrepreneur</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">
+                            Interests & Skills
+                        </label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <label class="flex items-center space-x-2 p-3 bg-gray-800 rounded-lg border border-gray-600 hover:border-cyan-400 transition-colors cursor-pointer">
+                                <input type="checkbox" name="interests" value="learning" class="text-cyan-400">
+                                <span class="text-sm text-gray-300">Learning</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 bg-gray-800 rounded-lg border border-gray-600 hover:border-cyan-400 transition-colors cursor-pointer">
+                                <input type="checkbox" name="interests" value="fitness" class="text-cyan-400">
+                                <span class="text-sm text-gray-300">Fitness</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 bg-gray-800 rounded-lg border border-gray-600 hover:border-cyan-400 transition-colors cursor-pointer">
+                                <input type="checkbox" name="interests" value="social" class="text-cyan-400">
+                                <span class="text-sm text-gray-300">Social</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 bg-gray-800 rounded-lg border border-gray-600 hover:border-cyan-400 transition-colors cursor-pointer">
+                                <input type="checkbox" name="interests" value="creativity" class="text-cyan-400">
+                                <span class="text-sm text-gray-300">Creativity</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 bg-gray-800 rounded-lg border border-gray-600 hover:border-cyan-400 transition-colors cursor-pointer">
+                                <input type="checkbox" name="interests" value="technology" class="text-cyan-400">
+                                <span class="text-sm text-gray-300">Technology</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 bg-gray-800 rounded-lg border border-gray-600 hover:border-cyan-400 transition-colors cursor-pointer">
+                                <input type="checkbox" name="interests" value="mindfulness" class="text-cyan-400">
+                                <span class="text-sm text-gray-300">Mindfulness</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 bg-gray-800 rounded-lg border border-gray-600 hover:border-cyan-400 transition-colors cursor-pointer">
+                                <input type="checkbox" name="interests" value="business" class="text-cyan-400">
+                                <span class="text-sm text-gray-300">Business</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 bg-gray-800 rounded-lg border border-gray-600 hover:border-cyan-400 transition-colors cursor-pointer">
+                                <input type="checkbox" name="interests" value="adventure" class="text-cyan-400">
+                                <span class="text-sm text-gray-300">Adventure</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="goal" class="block text-sm font-medium text-gray-300 mb-2">
+                            Goals & Aspirations
+                        </label>
+                        <textarea id="goal" 
+                                  name="goal" 
+                                  rows="3"
+                                  class="w-full px-4 py-3 bg-gray-800 border border-cyan-400 rounded-lg text-gray-100 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all resize-none"
+                                  placeholder="What do you want to achieve? What challenges are you facing? (This helps our AI create better quests for you)"></textarea>
+                    </div>
+                </div>
+
+                <!-- Preview Panel -->
+                <div id="character-preview" class="cyber-panel p-6 bg-gray-900/50">
+                    <h4 class="text-lg font-title text-cyan-400 mb-4">Character Preview</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-gray-300 mb-2">
+                                <span class="text-cyan-400">Name:</span> 
+                                <span id="preview-name" class="font-mono">Enter your name</span>
+                            </p>
+                            <p class="text-gray-300 mb-2">
+                                <span class="text-cyan-400">Class:</span> 
+                                <span id="preview-class" class="font-mono">Will be determined by AI</span>
+                            </p>
+                        </div>
+                        <div>
+                            <h5 class="text-cyan-400 text-sm mb-2">Starting Stats</h5>
+                            <div class="grid grid-cols-5 gap-2 text-xs">
+                                <div class="text-center">
+                                    <div class="text-gray-400">STR</div>
+                                    <div class="text-cyan-400 font-mono">10</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-gray-400">INT</div>
+                                    <div class="text-cyan-400 font-mono">10</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-gray-400">CHR</div>
+                                    <div class="text-cyan-400 font-mono">10</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-gray-400">END</div>
+                                    <div class="text-cyan-400 font-mono">10</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-gray-400">LCK</div>
+                                    <div class="text-cyan-400 font-mono">10</div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">
+                                *AI will assign bonus points based on your profile
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Messages -->
+                {% if messages %}
+                <div class="space-y-2">
+                    {% for message in messages %}
+                    <div class="cyber-panel p-4 border-red-400 text-red-400">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Submit Button -->
+                <div class="flex justify-center pt-6">
+                    <button type="submit" 
+                            class="btn-primary px-12 py-4 text-xl font-semibold inline-flex items-center space-x-3 hover:scale-105 transition-all duration-300">
+                        <span>Create Character</span>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="text-center mt-6">
+                    <p class="text-gray-400 text-sm">
+                        Already have an account? 
+                        <a href="{% url 'login' %}" class="text-cyan-400 hover:text-cyan-300 underline">
+                            Sign in here
+                        </a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Live preview updates
+    document.getElementById('name').addEventListener('input', function(e) {
+        const previewName = document.getElementById('preview-name');
+        previewName.textContent = e.target.value || 'Enter your name';
+    });
+    
+    // Form validation and enhancement
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const button = e.target.querySelector('button[type="submit"]');
+        button.innerHTML = `
+            <div class="loading-spinner"></div>
+            <span>Creating Character...</span>
+        `;
+        button.disabled = true;
+    });
+    
+    // Add hover effects to checkboxes
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const label = this.closest('label');
+            if (this.checked) {
+                label.classList.add('border-cyan-400', 'bg-cyan-400/10');
+            } else {
+                label.classList.remove('border-cyan-400', 'bg-cyan-400/10');
+            }
+        });
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% block title %}AI Mentor Chat - Aura Growth{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+    <div class="max-w-2xl mx-auto h-screen flex flex-col">
+        <!-- Simple Header -->
+        <div class="flex items-center justify-between p-4 border-b border-gray-700">
+            <div class="flex items-center space-x-3">
+                <a href="{% url 'dashboard' %}" class="text-holographic hover:text-holographic-dim">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </a>
+                <h1 class="text-xl font-semibold text-white">{{ profile.ai_personality|capfirst }} AI</h1>
+            </div>
+        </div>
+
+        <!-- Chat Interface -->
+        <div class="flex-1 flex flex-col bg-slate-900">
+            <!-- Chat Messages Container -->
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3">
+                <!-- Welcome Message -->
+                <div class="flex flex-col items-center justify-center h-full text-center p-8">
+                    <div class="w-16 h-16 mb-4 bg-holographic rounded-full flex items-center justify-center">
+                        <span class="text-2xl">🤖</span>
+                    </div>
+                    <h3 class="text-xl text-white mb-2">Hey there! What can I do for you today?</h3>
+                    <p class="text-gray-400 text-sm mb-6">I'm here to help!</p>
+                    
+                    <!-- Quick suggestions like mobile chat -->
+                    <div class="space-y-2 w-full max-w-sm">
+                        <div class="bg-gray-800 text-gray-300 px-4 py-3 rounded-xl text-sm suggestion-msg" style="cursor: pointer;">
+                            I completed my workout today
+                        </div>
+                        <div class="bg-gray-800 text-gray-300 px-4 py-3 rounded-xl text-sm suggestion-msg" style="cursor: pointer;">
+                            I read for 30 minutes
+                        </div>
+                        <div class="bg-gray-800 text-gray-300 px-4 py-3 rounded-xl text-sm suggestion-msg" style="cursor: pointer;">
+                            Add habit: morning run
+                        </div>
+                        <div class="bg-gray-800 text-gray-300 px-4 py-3 rounded-xl text-sm suggestion-msg" style="cursor: pointer;">
+                            I'm feeling motivated today
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="border-t border-gray-700 p-4">
+                <form id="chat-form" 
+                      class="flex items-center space-x-3">
+                    {% csrf_token %}
+                    
+                    <div class="flex-1 relative">
+                        <input type="text" 
+                               id="message-input"
+                               name="message" 
+                               placeholder="Ask me anything..."
+                               class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-2xl text-gray-100 placeholder-gray-400 focus:border-holographic focus:outline-none resize-none"
+                               required
+                               autocomplete="off">
+                    </div>
+                    
+                    <button type="submit" 
+                            class="w-10 h-10 bg-holographic rounded-full flex items-center justify-center hover:bg-holographic-dim transition-colors">
+                        <svg class="w-5 h-5 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Auto-scroll to bottom of chat
+    function scrollToBottom() {
+        const chatMessages = document.getElementById('chat-messages');
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Clear chat history and reset to welcome state
+    function clearChatHistory() {
+        const chatMessages = document.getElementById('chat-messages');
+        if (chatMessages) {
+            chatMessages.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-center p-8">
+                    <div class="w-16 h-16 mb-4 bg-holographic rounded-full flex items-center justify-center">
+                        <span class="text-2xl">🤖</span>
+                    </div>
+                    <h3 class="text-xl text-white mb-2">Hey there! What can I do for you today?</h3>
+                    <p class="text-gray-400 text-sm mb-6">I'm here to help!</p>
+                    
+                    <div class="space-y-2 w-full max-w-sm">
+                        <div class="bg-gray-800 text-gray-300 px-4 py-3 rounded-xl text-sm suggestion-msg" style="cursor: pointer;">
+                            I completed my workout today
+                        </div>
+                        <div class="bg-gray-800 text-gray-300 px-4 py-3 rounded-xl text-sm suggestion-msg" style="cursor: pointer;">
+                            I read for 30 minutes
+                        </div>
+                        <div class="bg-gray-800 text-gray-300 px-4 py-3 rounded-xl text-sm suggestion-msg" style="cursor: pointer;">
+                            Add habit: morning run
+                        </div>
+                        <div class="bg-gray-800 text-gray-300 px-4 py-3 rounded-xl text-sm suggestion-msg" style="cursor: pointer;">
+                            I'm feeling motivated today
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Re-attach click handlers to new suggestion messages
+            document.querySelectorAll('.suggestion-msg').forEach(suggestion => {
+                suggestion.addEventListener('click', function() {
+                    const message = this.textContent.trim();
+                    const input = document.getElementById('message-input');
+                    input.value = message;
+                    input.focus();
+                });
+            });
+        }
+    }
+
+    // Scroll to bottom on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        scrollToBottom();
+    });
+
+    // Make suggestion messages clickable
+    document.querySelectorAll('.suggestion-msg').forEach(suggestion => {
+        suggestion.addEventListener('click', function() {
+            const message = this.textContent.trim();
+            const input = document.getElementById('message-input');
+            input.value = message;
+            input.focus();
+        });
+    });
+
+    // Enhanced form submission
+    document.getElementById('chat-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const input = document.getElementById('message-input');
+        const message = input.value.trim();
+        
+        if (!message) {
+            return;
+        }
+
+        // Add user message immediately to UI
+        const chatMessages = document.getElementById('chat-messages');
+        const userMessageDiv = document.createElement('div');
+        userMessageDiv.className = 'animate-slide-in';
+        userMessageDiv.innerHTML = `
+            <div class="flex justify-end">
+                <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-br-md max-w-sm break-words">
+                    <p class="text-sm">${message}</p>
+                </div>
+            </div>
+        `;
+        chatMessages.appendChild(userMessageDiv);
+        scrollToBottom();
+
+        // Show typing indicator
+        const typingDiv = document.createElement('div');
+        typingDiv.id = 'ai-typing';
+        typingDiv.className = 'animate-slide-in';
+        typingDiv.innerHTML = `
+            <div class="flex justify-start">
+                                    <div class="bg-gray-600 text-white px-4 py-2 rounded-2xl rounded-bl-md max-w-sm break-words">
+                        <div class="flex items-center space-x-2">
+                            <div class="loading-spinner w-3 h-3"></div>
+                            <span class="text-sm">Thinking...</span>
+                        </div>
+                    </div>
+            </div>
+        `;
+        chatMessages.appendChild(typingDiv);
+        scrollToBottom();
+
+        // Clear input and submit via fetch
+        input.value = '';
+        
+        // Send message to server
+        const formData = new FormData();
+        formData.append('message', message);
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        
+        fetch('{% url "chat" %}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Remove typing indicator
+            const typingIndicator = document.getElementById('ai-typing');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+            
+            // Add AI response
+            const aiMessageDiv = document.createElement('div');
+            aiMessageDiv.className = 'animate-slide-in';
+            aiMessageDiv.innerHTML = `
+                <div class="flex justify-start">
+                    <div class="bg-gray-600 text-white px-4 py-2 rounded-2xl rounded-bl-md max-w-sm break-words">
+                        <p class="text-sm">${data.response}</p>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(aiMessageDiv);
+            scrollToBottom();
+
+            // Handle action data (XP gains, stat updates, etc.)
+            if (data.action_data && Object.keys(data.action_data).length > 0) {
+                if (data.action_data.xp) {
+                    showXPGain(data.action_data.xp, data.action_data.stat_gains || {});
+                }
+                
+                // Refresh stats if they changed
+                if (data.action_data.stat_gains || data.action_data.xp) {
+                    setTimeout(() => {
+                        // Clear chat and refresh stats
+                        clearChatHistory();
+                        setTimeout(() => location.reload(), 500);
+                    }, 2000);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Chat error:', error);
+            // Remove typing indicator
+            const typingIndicator = document.getElementById('ai-typing');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+            
+            // Show error message
+            const errorMessageDiv = document.createElement('div');
+            errorMessageDiv.className = 'animate-slide-in';
+            errorMessageDiv.innerHTML = `
+                <div class="flex justify-start">
+                    <div class="bg-red-600 text-white px-4 py-2 rounded-2xl rounded-bl-md max-w-sm break-words">
+                        <p class="text-sm">Sorry, I'm having trouble responding right now. Please try again.</p>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(errorMessageDiv);
+            scrollToBottom();
+        });
+    });
+
+
+
+    // Enter key support
+    document.getElementById('message-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            document.getElementById('chat-form').dispatchEvent(new Event('submit', {
+                cancelable: true,
+                bubbles: true
+            }));
+        }
+    });
+
+    // Auto-resize input (if we add textarea later)
+    function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
+    // Focus input on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('message-input').focus();
+    });
+
+    // Clear chat when page is refreshed or navigated away
+    window.addEventListener('beforeunload', function() {
+        const chatMessages = document.getElementById('chat-messages');
+        if (chatMessages) {
+            // Reset to welcome message only
+            chatMessages.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-center p-8">
+                    <div class="w-16 h-16 mb-4 bg-holographic rounded-full flex items-center justify-center">
+                        <span class="text-2xl">🤖</span>
+                    </div>
+                    <h3 class="text-xl text-white mb-2">Hey there! What can I do for you today?</h3>
+                    <p class="text-gray-400 text-sm mb-6">I'm here to help!</p>
+                    
+                    <div class="space-y-2 w-full max-w-sm">
+                        <div class="bg-gray-800 text-gray-300 px-4 py-3 rounded-xl text-sm suggestion-msg" style="cursor: pointer;">
+                            I completed my workout today
+                        </div>
+                        <div class="bg-gray-800 text-gray-300 px-4 py-3 rounded-xl text-sm suggestion-msg" style="cursor: pointer;">
+                            I read for 30 minutes
+                        </div>
+                        <div class="bg-gray-800 text-gray-300 px-4 py-3 rounded-xl text-sm suggestion-msg" style="cursor: pointer;">
+                            Add habit: morning run
+                        </div>
+                        <div class="bg-gray-800 text-gray-300 px-4 py-3 rounded-xl text-sm suggestion-msg" style="cursor: pointer;">
+                            I'm feeling motivated today
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    });
+</script>
+{% endblock %} 

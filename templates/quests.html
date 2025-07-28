@@ -1,0 +1,381 @@
+{% extends "base.html" %}
+
+{% block title %}Quest Log - Aura Growth{% endblock %}
+
+{% block content %}
+<div class="min-h-screen p-6">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="font-title text-4xl text-transparent bg-gradient-to-r from-holographic to-cyan-bright bg-clip-text mb-2">
+                Quest Log
+            </h1>
+            <p class="text-xl text-gray-400">
+                Track your progress and conquer your challenges
+            </p>
+        </div>
+
+        <!-- Quest Categories -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- Daily Quests -->
+            <div class="cyber-panel p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-title text-holographic">Daily Quests</h2>
+                                    <div class="flex items-center space-x-2">
+                    <span class="text-sm text-gray-400">Today's challenges</span>
+                    <div class="w-2 h-2 bg-holographic rounded-full animate-pulse"></div>
+                </div>
+                </div>
+                
+                <div class="space-y-4 max-h-96 overflow-y-auto">
+                    {% for quest in daily_quests %}
+                    <div class="quest-item cyber-panel p-4 bg-gray-900/50 {% if quest.completed %}opacity-75{% endif %}">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                                <h3 class="text-lg font-semibold {% if quest.completed %}text-green-400{% else %}text-holographic{% endif %} mb-1">
+                    {{ quest.title }}
+                </h3>
+                                <p class="text-gray-300 text-sm mb-2">{{ quest.description }}</p>
+                                
+                                <!-- Quest Meta -->
+                                <div class="flex items-center space-x-4 text-xs mb-3">
+                                    <span class="bg-gray-700 px-2 py-1 rounded text-gray-300">
+                                        {{ quest.difficulty|capfirst }}
+                                    </span>
+                                    <span class="text-gray-400">+{{ quest.reward_xp }} XP</span>
+                                    {% if quest.due_date %}
+                                    <span class="text-yellow-400">Due: {{ quest.due_date|date:"M d" }}</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Stat Rewards -->
+                                {% if quest.reward_strength or quest.reward_intelligence or quest.reward_charisma or quest.reward_endurance or quest.reward_luck %}
+                                <div class="flex items-center space-x-2 text-xs">
+                                    <span class="text-gray-400">Rewards:</span>
+                                    {% if quest.reward_strength %}<span class="text-red-400">+{{ quest.reward_strength }} STR</span>{% endif %}
+                                    {% if quest.reward_intelligence %}<span class="text-blue-400">+{{ quest.reward_intelligence }} INT</span>{% endif %}
+                                    {% if quest.reward_charisma %}<span class="text-purple-400">+{{ quest.reward_charisma }} CHR</span>{% endif %}
+                                    {% if quest.reward_endurance %}<span class="text-green-400">+{{ quest.reward_endurance }} END</span>{% endif %}
+                                    {% if quest.reward_luck %}<span class="text-yellow-400">+{{ quest.reward_luck }} LCK</span>{% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Action Button -->
+                            <div class="ml-4">
+                                {% if quest.completed %}
+                                <div class="flex items-center space-x-2 text-green-400">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-sm font-mono">COMPLETE</span>
+                                </div>
+                                {% else %}
+                                <button hx-post="{% url 'complete_quest' quest.id %}"
+                                        hx-target="#quest-response-handler"
+                                        hx-swap="innerHTML"
+                                        class="btn-primary px-4 py-2 text-sm">
+                                    Complete
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-6">
+                        <p class="text-gray-400 mb-4">No daily quests available</p>
+                        <a href="{% url 'dashboard' %}" class="btn-primary px-4 py-2 text-sm">
+                            Generate Quests
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Habit Quests -->
+            <div class="cyber-panel p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-title text-purple-400">Habit Challenges</h2>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-gray-400">Long-term goals</span>
+                        <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+                    </div>
+                </div>
+                
+                <div class="space-y-4 max-h-96 overflow-y-auto">
+                    {% for quest in habit_quests %}
+                    <div class="quest-item cyber-panel p-4 bg-gray-900/50 {% if quest.completed %}opacity-75{% endif %}">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold {% if quest.completed %}text-green-400{% else %}text-purple-400{% endif %} mb-1">
+                                    {{ quest.title }}
+                                </h3>
+                                <p class="text-gray-300 text-sm mb-2">{{ quest.description }}</p>
+                                
+                                <div class="flex items-center space-x-4 text-xs">
+                                    <span class="bg-purple-700 px-2 py-1 rounded text-gray-300">
+                                        Habit
+                                    </span>
+                                    <span class="text-gray-400">+{{ quest.reward_xp }} XP</span>
+                                </div>
+                            </div>
+                            
+                            <div class="ml-4">
+                                {% if quest.completed %}
+                                <div class="flex items-center space-x-2 text-green-400">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-sm font-mono">COMPLETE</span>
+                                </div>
+                                {% else %}
+                                <button hx-post="{% url 'complete_quest' quest.id %}"
+                                        hx-target="#quest-response-handler"
+                                        hx-swap="innerHTML"
+                                        class="btn-primary px-4 py-2 text-sm">
+                                    Complete
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-6">
+                        <p class="text-gray-400">No habit challenges yet</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Challenge Quests -->
+            <div class="cyber-panel p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-title text-orange-400">Epic Challenges</h2>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-gray-400">Multi-day quests</span>
+                        <div class="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
+                    </div>
+                </div>
+                
+                <div class="space-y-4 max-h-96 overflow-y-auto">
+                    {% for quest in challenge_quests %}
+                    <div class="quest-item cyber-panel p-4 bg-gray-900/50 {% if quest.completed %}opacity-75{% endif %}">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold {% if quest.completed %}text-green-400{% else %}text-orange-400{% endif %} mb-1">
+                                    {{ quest.title }}
+                                </h3>
+                                <p class="text-gray-300 text-sm mb-2">{{ quest.description }}</p>
+                                
+                                <div class="flex items-center space-x-4 text-xs">
+                                    <span class="bg-orange-700 px-2 py-1 rounded text-gray-300">
+                                        {{ quest.difficulty|capfirst }} Challenge
+                                    </span>
+                                    <span class="text-gray-400">+{{ quest.reward_xp }} XP</span>
+                                </div>
+                            </div>
+                            
+                            <div class="ml-4">
+                                {% if quest.completed %}
+                                <div class="flex items-center space-x-2 text-green-400">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-sm font-mono">COMPLETE</span>
+                                </div>
+                                {% else %}
+                                <button hx-post="{% url 'complete_quest' quest.id %}"
+                                        hx-target="#quest-response-handler"
+                                        hx-swap="innerHTML"
+                                        class="btn-primary px-4 py-2 text-sm">
+                                    Complete
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-6">
+                        <p class="text-gray-400">No epic challenges yet</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Bonus Quests -->
+            <div class="cyber-panel p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-title text-yellow-400">Bonus Quests</h2>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-gray-400">Special rewards</span>
+                        <div class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                    </div>
+                </div>
+                
+                <div class="space-y-4 max-h-96 overflow-y-auto">
+                    {% for quest in bonus_quests %}
+                    <div class="quest-item cyber-panel p-4 bg-gray-900/50 {% if quest.completed %}opacity-75{% endif %}">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold {% if quest.completed %}text-green-400{% else %}text-yellow-400{% endif %} mb-1">
+                                    {{ quest.title }}
+                                </h3>
+                                <p class="text-gray-300 text-sm mb-2">{{ quest.description }}</p>
+                                
+                                <div class="flex items-center space-x-4 text-xs">
+                                    <span class="bg-yellow-700 px-2 py-1 rounded text-gray-300">
+                                        Bonus
+                                    </span>
+                                    <span class="text-gray-400">+{{ quest.reward_xp }} XP</span>
+                                    <span class="text-yellow-400">✨ Special Reward</span>
+                                </div>
+                            </div>
+                            
+                            <div class="ml-4">
+                                {% if quest.completed %}
+                                <div class="flex items-center space-x-2 text-green-400">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-sm font-mono">COMPLETE</span>
+                                </div>
+                                {% else %}
+                                <button hx-post="{% url 'complete_quest' quest.id %}"
+                                        hx-target="#quest-response-handler"
+                                        hx-swap="innerHTML"
+                                        class="btn-primary px-4 py-2 text-sm">
+                                    Complete
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-6">
+                        <p class="text-gray-400">No bonus quests available</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Quest Statistics -->
+        <div class="mt-8 cyber-panel p-6">
+            <h3 class="text-2xl font-title text-holographic mb-6">Quest Statistics</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <div class="text-3xl font-mono text-holographic mb-2">{{ daily_quests|length }}</div>
+                    <div class="text-sm text-gray-400">Daily Quests</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-mono text-purple-400 mb-2">{{ habit_quests|length }}</div>
+                    <div class="text-sm text-gray-400">Habit Challenges</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-mono text-orange-400 mb-2">{{ challenge_quests|length }}</div>
+                    <div class="text-sm text-gray-400">Epic Challenges</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-mono text-yellow-400 mb-2">{{ bonus_quests|length }}</div>
+                    <div class="text-sm text-gray-400">Bonus Quests</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden div to handle HTMX responses -->
+<div id="quest-response-handler" style="display: none;"></div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Handle quest completion
+    document.addEventListener('htmx:afterRequest', function(evt) {
+        if (evt.detail.requestConfig.verb === 'post' && evt.detail.requestConfig.path.includes('complete-quest')) {
+            const button = evt.detail.elt;
+            console.log('Quest completion response received:', evt.detail.xhr.responseText);
+            
+            if (evt.detail.xhr.status === 200) {
+                try {
+                    const response = JSON.parse(evt.detail.xhr.responseText);
+                    if (response.success && response.xp_gained) {
+                        showXPGain(response.xp_gained, response.stat_gains);
+                        
+                        if (response.new_level && response.new_level > {{ profile.level }}) {
+                            setTimeout(() => {
+                                showLevelUp(response.new_level);
+                            }, 1000);
+                        }
+                        
+                        // Update button to completed state
+                        button.innerHTML = `
+                            <div class="flex items-center space-x-2 text-green-400">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-sm font-mono">COMPLETE</span>
+                            </div>
+                        `;
+                        button.disabled = true;
+                        button.classList.remove('btn-primary');
+                        button.classList.add('cursor-not-allowed');
+                        
+                        // Update quest item opacity to show completion
+                        const questItem = button.closest('.quest-item');
+                        if (questItem) {
+                            questItem.classList.add('opacity-75');
+                            // Update quest title color to green
+                            const questTitle = questItem.querySelector('h3');
+                            if (questTitle) {
+                                questTitle.classList.remove('text-holographic', 'text-purple-400', 'text-orange-400', 'text-yellow-400');
+                                questTitle.classList.add('text-green-400');
+                            }
+                        }
+                        
+                    } else if (response.message) {
+                        showNotification(response.message, response.success ? 'success' : 'warning');
+                    }
+                } catch (e) {
+                    console.error('Error parsing quest response:', e);
+                    showNotification('Quest completed, but there was an issue parsing the response', 'warning');
+                }
+            } else if (evt.detail.xhr.status === 403) {
+                showNotification('Permission denied. Please refresh the page and try again.', 'error');
+                // Reset button state
+                resetButton(button);
+            } else {
+                showNotification('Failed to complete quest. Please try again.', 'error');
+                // Reset button state
+                resetButton(button);
+            }
+        }
+    });
+
+    // Add loading states
+    document.addEventListener('htmx:beforeRequest', function(evt) {
+        const button = evt.detail.elt;
+        if (button.tagName === 'BUTTON' && evt.detail.requestConfig.path.includes('complete-quest')) {
+            button.classList.add('opacity-50');
+            button.disabled = true;
+            button.innerHTML = '<div class="loading-spinner w-4 h-4 mx-auto"></div>';
+        }
+    });
+    
+    // Handle request errors
+    document.addEventListener('htmx:responseError', function(evt) {
+        if (evt.detail.requestConfig.path.includes('complete-quest')) {
+            showNotification('Network error. Please check your connection and try again.', 'error');
+            resetButton(evt.detail.elt);
+        }
+    });
+    
+    function resetButton(button) {
+        button.classList.remove('opacity-50');
+        button.disabled = false;
+        button.innerHTML = 'Complete';
+    }
+</script>
+{% endblock %} 
