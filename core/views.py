@@ -113,11 +113,12 @@ def register(request):
                         args=[profile.id],
                         countdown=10
                     )
+                except ImportError:
+                    print("Celery not available - background tasks skipped")
                 except Exception as e:
-                    # If Celery isn't available, log but don't fail registration
+                    # If Celery/Redis isn't available, log but don't fail registration
                     print(f"Background task scheduling failed: {e}")
-                    # Could add these tasks to a queue or run synchronously as fallback
-                    pass
+                    # Registration still succeeds without background enhancement
                 
                 return redirect('dashboard')
                 

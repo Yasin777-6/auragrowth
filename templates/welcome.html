@@ -3,15 +3,22 @@
 {% block title %}Welcome to Aura Growth - Your Journey Begins{% endblock %}
 
 {% block extra_head %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <style>
     body {
         background: #000000 !important;
-        overflow: hidden;
+        overflow-x: hidden;
+        min-height: 100vh;
     }
     
     .welcome-container {
         background: #000000;
         min-height: 100vh;
+        min-height: 100dvh; /* Dynamic viewport height for mobile */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
     }
     
     .intro-text {
@@ -61,6 +68,7 @@
         color: #000000;
         font-weight: 600;
         transition: all 0.3s ease;
+        touch-action: manipulation; /* Better touch handling on mobile */
     }
     
     .btn-primary:hover {
@@ -69,7 +77,79 @@
         transform: translateY(-2px);
     }
     
-    /* Minimal decorative elements */
+    /* Mobile-specific optimizations */
+    @media (max-width: 768px) {
+        .welcome-container {
+            padding: 1rem 0.5rem;
+        }
+        
+        .main-content {
+            max-width: 100%;
+            padding: 0 1rem;
+        }
+        
+        .logo-title {
+            font-size: 3rem !important; /* Smaller on mobile */
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+        
+        .intro-text {
+            font-size: 1.25rem !important; /* Smaller text on mobile */
+            line-height: 1.4;
+            margin-bottom: 1.5rem;
+        }
+        
+        .intro-text.final {
+            font-size: 1.5rem !important;
+        }
+        
+        .btn-primary {
+            padding: 1rem 2rem !important;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 280px;
+            justify-content: center;
+        }
+        
+        .status-indicator {
+            display: none; /* Hide on mobile to save space */
+        }
+        
+        .space-y-8 {
+            gap: 1.5rem;
+        }
+        
+        .mb-16 {
+            margin-bottom: 2rem;
+        }
+    }
+    
+    /* Very small screens */
+    @media (max-width: 480px) {
+        .logo-title {
+            font-size: 2.5rem !important;
+        }
+        
+        .intro-text {
+            font-size: 1.1rem !important;
+        }
+        
+        .intro-text.final {
+            font-size: 1.3rem !important;
+        }
+        
+        .btn-primary {
+            padding: 0.875rem 1.5rem !important;
+            font-size: 0.9rem;
+        }
+        
+        .welcome-container {
+            padding: 0.5rem;
+        }
+    }
+    
+    /* Status indicators for larger screens */
     .status-indicator {
         opacity: 0;
         animation: statusFadeIn 0.5s ease-out 4s forwards;
@@ -82,34 +162,34 @@
 {% endblock %}
 
 {% block content %}
-<div class="welcome-container flex items-center justify-center relative">
+<div class="welcome-container">
     <!-- Main content -->
-    <div class="text-center z-10 max-w-4xl mx-auto px-6">
+    <div class="main-content text-center z-10 max-w-4xl mx-auto">
         <!-- Logo -->
         <div class="mb-16">
-            <h1 class="font-title text-8xl md:text-9xl text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text logo-glow mb-4">
+            <h1 class="logo-title font-title text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text logo-glow mb-4">
                 AURA GROWTH
             </h1>
-            <p class="text-xl text-gray-400 font-mono">
+            <p class="text-lg sm:text-xl text-gray-400 font-mono">
                 Live Your Life Like an Anime RPG
             </p>
         </div>
         
         <!-- Intro text sequence -->
         <div class="space-y-8 mb-16">
-            <p class="intro-text text-2xl md:text-3xl font-light text-gray-200">
+            <p class="intro-text text-xl sm:text-2xl md:text-3xl font-light text-gray-200">
                 You have awakened in a new world...
             </p>
             
-            <p class="intro-text text-2xl md:text-3xl font-light text-gray-200">
+            <p class="intro-text text-xl sm:text-2xl md:text-3xl font-light text-gray-200">
                 Where every action shapes your destiny.
             </p>
             
-            <p class="intro-text text-2xl md:text-3xl font-light text-gray-200">
+            <p class="intro-text text-xl sm:text-2xl md:text-3xl font-light text-gray-200">
                 Your journey to become the hero of your own story begins now.
             </p>
             
-            <p class="intro-text text-3xl md:text-4xl font-semibold text-cyan-400">
+            <p class="intro-text final text-2xl sm:text-3xl md:text-4xl font-semibold text-cyan-400">
                 Will you grow stronger?
             </p>
         </div>
@@ -117,15 +197,15 @@
         <!-- Call to action -->
         <div class="begin-button">
             <a href="{% url 'register' %}" 
-               class="btn-primary px-12 py-4 text-xl font-semibold inline-flex items-center space-x-3 rounded-lg">
+               class="btn-primary px-8 sm:px-12 py-3 sm:py-4 text-lg sm:text-xl font-semibold inline-flex items-center space-x-3 rounded-lg">
                 <span>Begin Your Journey</span>
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                 </svg>
             </a>
             
-            <div class="mt-8">
-                <p class="text-gray-400 text-sm">
+            <div class="mt-6 sm:mt-8">
+                <p class="text-gray-400 text-sm sm:text-base">
                     Already have an account? 
                     <a href="{% url 'login' %}" class="text-cyan-400 hover:text-cyan-300 underline transition-colors">
                         Continue your adventure
@@ -135,15 +215,15 @@
         </div>
     </div>
     
-    <!-- Minimal status indicators -->
-    <div class="absolute bottom-10 left-10 status-indicator">
+    <!-- Status indicators - hidden on mobile -->
+    <div class="absolute bottom-10 left-10 status-indicator hidden md:block">
         <div class="flex items-center space-x-2 text-cyan-400">
             <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
             <span class="text-sm font-mono">SYSTEM ONLINE</span>
         </div>
     </div>
     
-    <div class="absolute bottom-10 right-10 status-indicator">
+    <div class="absolute bottom-10 right-10 status-indicator hidden md:block">
         <div class="flex items-center space-x-2 text-green-400">
             <span class="text-sm font-mono">READY</span>
             <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
@@ -158,28 +238,30 @@
         // Simple click ripple effect
         const beginButton = document.querySelector('.begin-button a');
         
-        beginButton.addEventListener('click', function(e) {
-            const ripple = document.createElement('div');
-            ripple.style.cssText = `
-                position: absolute;
-                border-radius: 50%;
-                background: rgba(0, 255, 255, 0.3);
-                transform: scale(0);
-                animation: ripple 0.6s ease-out;
-                pointer-events: none;
-            `;
-            
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            ripple.style.width = ripple.style.height = size + 'px';
-            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
-            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
-            
-            this.style.position = 'relative';
-            this.appendChild(ripple);
-            
-            setTimeout(() => ripple.remove(), 600);
-        });
+        if (beginButton) {
+            beginButton.addEventListener('click', function(e) {
+                const ripple = document.createElement('div');
+                ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(0, 255, 255, 0.3);
+                    transform: scale(0);
+                    animation: ripple 0.6s ease-out;
+                    pointer-events: none;
+                `;
+                
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+                ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+                
+                this.style.position = 'relative';
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        }
     });
     
     // Ripple animation

@@ -114,7 +114,7 @@ class Quest(models.Model):
     # Status and timing
     completed = models.BooleanField(default=False)
     completed_at = models.DateTimeField(null=True, blank=True)
-    due_date = models.DateTimeField(null=True, blank=True)
+    due_date = models.DateField(null=True, blank=True, help_text="When this quest is due")
     created_at = models.DateTimeField(auto_now_add=True)
     
     # AI metadata

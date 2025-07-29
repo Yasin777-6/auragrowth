@@ -133,7 +133,7 @@ def parse_ai_action(ai_response, profile):
                     difficulty='medium',
                     reward_xp=15,
                     reward_intelligence=1,
-                    due_date=timezone.now().date() + timedelta(days=1),
+                    due_date=timezone.now().date(),
                     generated_by_ai=True
                 )
                 action_data['quest_created'] = quest_title
@@ -190,32 +190,45 @@ def clean_ai_response(ai_response):
 
 
 def generate_daily_quests(profile, count=5):
-    """Generate daily quests for a user using AI"""
+    """Generate daily quests for a user using AI, focused on their goal"""
     from .models import Quest, LogEntry
     
     # Get user context
     recent_logs = LogEntry.objects.filter(profile=profile).order_by('-timestamp')[:10]
     completed_quests = profile.quests.filter(completed=True).order_by('-completed_at')[:5]
     
+    # Enhanced context with goal focus
+    goal_context = f"User's main goal: {profile.goal}" if profile.goal else "User hasn't set a specific goal - focus on general self-improvement"
+    goal_progress_context = f"They are {profile.goal_progress}% toward achieving their goal." if profile.goal else ""
+    
     context = f"""
     Generate {count} daily quests for {profile.name}, Level {profile.level} {profile.character_class}.
     
     Current stats: STR:{profile.strength} INT:{profile.intelligence} CHR:{profile.charisma} END:{profile.endurance} LCK:{profile.luck}
     
+    {goal_context}
+    {goal_progress_context}
+    
     Recent activity: {[log.action_description for log in recent_logs[:3]]}
     Recent completions: {[quest.title for quest in completed_quests[:3]]}
     
     Create varied quests that:
-    1. Match their current level and interests
-    2. Focus on different stats (STR for physical, INT for learning, etc.)
-    3. Are achievable in one day
-    4. Provide appropriate XP rewards (10-50 based on difficulty)
+    1. DIRECTLY help them achieve their stated goal
+    2. Build relevant stats for their goal (physical goals = STR/END, learning goals = INT, social goals = CHR)
+    3. Are achievable in one day but meaningful
+    4. Progress toward their main objective
+    5. Provide appropriate XP rewards (10-50 based on difficulty)
+    
+    Examples:
+    - If goal is "get fit", create: workouts, meal prep, sleep tracking
+    - If goal is "learn programming", create: coding practice, algorithm study, project building
+    - If goal is "be more social", create: conversations, networking, social activities
     
     Return JSON array:
     [
         {{
-            "title": "Quest Title",
-            "description": "Detailed description",
+            "title": "Goal-Focused Quest Title",
+            "description": "Detailed description explaining how this helps achieve their goal",
             "difficulty": "easy|medium|hard",
             "reward_xp": 15,
             "reward_strength": 0,
@@ -228,17 +241,17 @@ def generate_daily_quests(profile, count=5):
     """
     
     try:
-        ai_response = generate_ai_response(context, max_tokens=1000)
+        ai_response = generate_ai_response(context, max_tokens=1200)
         
         # Extract JSON from response
         json_match = re.search(r'\[.*\]', ai_response, re.DOTALL)
         if json_match:
             quests_data = json.loads(json_match.group())
         else:
-            # Fallback quests if AI fails
-            quests_data = generate_fallback_quests(profile)
+            # Fallback quests based on goal if AI fails
+            quests_data = generate_goal_based_fallback_quests(profile)
         
-        # Create quest objects
+        # Create quest objects with proper timezone-aware datetime
         created_quests = []
         for quest_data in quests_data:
             quest = Quest.objects.create(
@@ -253,7 +266,7 @@ def generate_daily_quests(profile, count=5):
                 reward_charisma=quest_data.get('reward_charisma', 0),
                 reward_endurance=quest_data.get('reward_endurance', 0),
                 reward_luck=quest_data.get('reward_luck', 0),
-                due_date=timezone.now().date() + timedelta(days=1),
+                due_date=timezone.now().date(),  # Use timezone-aware date
                 generated_by_ai=True
             )
             created_quests.append(quest)
@@ -262,7 +275,7 @@ def generate_daily_quests(profile, count=5):
         
     except Exception as e:
         print(f"Quest generation error: {e}")
-        return generate_fallback_quests(profile, create_objects=True)
+        return generate_goal_based_fallback_quests(profile, create_objects=True)
 
 
 def generate_fallback_quests(profile, create_objects=False):
@@ -327,7 +340,7 @@ def generate_fallback_quests(profile, create_objects=False):
                 reward_charisma=quest_data.get('reward_charisma', 0),
                 reward_endurance=quest_data.get('reward_endurance', 0),
                 reward_luck=quest_data.get('reward_luck', 0),
-                due_date=timezone.now().date() + timedelta(days=1),
+                due_date=timezone.now().date(),
                 generated_by_ai=False
             )
             created_quests.append(quest)
